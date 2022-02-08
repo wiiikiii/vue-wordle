@@ -8,7 +8,7 @@
     "sync": "rsync -aPv dist/ php74.wicom.li:/home/www/fundle.wicom.li/htdocs/"
   },
   "dependencies": {
-    "vue": "^3.2.25"
+    "vue": "^3.2.30"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.0.0",
