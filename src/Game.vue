@@ -5,10 +5,10 @@ import Keyboard from './Keyboard.vue'
 import { LetterState } from './types'
 
 // Get word of the day
-const answer = getWordOfTheDay()
+let answer = $ref( getWordOfTheDay())
 
 // Board state. Each tile is represented as { letter, state }
-const board = $ref(
+let board = $ref(
   Array.from({ length: 6 }, () =>
     Array.from({ length: 5 }, () => ({
       letter: '',
@@ -28,7 +28,7 @@ let shakeRowIndex = $ref(-1)
 let success = $ref(false)
 
 // Keep track of revealed letters for the virtual keyboard
-const letterStates: Record<string, LetterState> = $ref({})
+let letterStates: Record<string, LetterState> = $ref({})
 
 // Handle keyboard input.
 let allowInput = true
@@ -40,6 +40,20 @@ window.addEventListener('keyup', onKeyup)
 onUnmounted(() => {
   window.removeEventListener('keyup', onKeyup)
 })
+
+function initGame() {
+  letterStates = {}
+  answer = getWordOfTheDay()
+  currentRowIndex = 0
+  board = Array.from({ length: 6 }, () =>
+    Array.from({ length: 5 }, () => ({
+      letter: '',
+      state: LetterState.INITIAL
+    }))
+  )
+  message = ''
+  allowInput = true
+}
 
 function onKey(key: string) {
   if (!allowInput) return
@@ -75,7 +89,7 @@ function completeRow() {
     const guess = currentRow.map((tile) => tile.letter).join('')
     if (!allWords.includes(guess) && guess !== answer) {
       shake()
-      showMessage(`Not in word list`)
+      showMessage(`Unbekannt, nicht in Liste`)
       return
     }
 
@@ -113,7 +127,7 @@ function completeRow() {
       setTimeout(() => {
         grid = genResultGrid()
         showMessage(
-          ['Genius', 'Magnificent', 'Impressive', 'Splendid', 'Great', 'Phew'][
+          ['Genie', 'Hervorragend', 'Ausgezeichnet', 'Bestens', 'Toll', 'Knapp :)'][
             currentRowIndex
           ],
           -1
@@ -134,7 +148,7 @@ function completeRow() {
     }
   } else {
     shake()
-    showMessage('Not enough letters')
+    showMessage('Nicht genügend Buchstaben')
   }
 }
 
@@ -173,23 +187,19 @@ function genResultGrid() {
 
 <template>
   <Transition>
-    <div class="message" v-if="message">
+    <div class="message" v-if="message" @click="initGame">
       {{ message }}
       <pre v-if="grid">{{ grid }}</pre>
     </div>
   </Transition>
   <header>
-    <h1>VVORDLE</h1>
-    <a
-      id="source-link"
-      href="https://github.com/yyx990803/vue-wordle"
-      target="_blank"
-      >Source</a
-    >
+    <h1>FUNDLE</h1>
+    <span style="position: absolute; top: 0; right: 0; font-size: 5px; color: lightgray;">{{answer}}</span>
   </header>
   <div id="board">
     <div
       v-for="(row, index) in board"
+      :key="index"
       :class="[
         'row',
         shakeRowIndex === index && 'shake',
@@ -198,6 +208,7 @@ function genResultGrid() {
     >
       <div
         v-for="(tile, index) in row"
+        :key="index"
         :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
       >
         <div class="front" :style="{ transitionDelay: `${index * 300}ms` }">
