@@ -194,7 +194,9 @@ function genResultGrid() {
   </Transition>
   <header>
     <h1>FUNDLE</h1>
+    <!--
     <span style="position: absolute; top: 0; right: 0; font-size: 5px; color: lightgray;">{{answer}}</span>
+    -->
   </header>
   <div id="board">
     <div

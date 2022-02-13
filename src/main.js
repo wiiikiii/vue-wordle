@@ -4,6 +4,7 @@ import './game.css'
 
 // resize for scaling the board size
 window.addEventListener('resize', onResize)
+window.addEventListener('orientationchange', onResize)
 // set size on startup
 onResize()
 
